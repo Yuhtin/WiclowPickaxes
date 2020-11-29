@@ -1,0 +1,60 @@
+connection:
+  mysql:
+    enabled: false
+    address: "localhost:3306"
+    username: "root"
+    password: ""
+    database: "test"
+  sqlite:
+    file: "pickaxes.sql"
+
+# Quantos % irá aumentar no preço a cada nivel
+# 0.2 = 20% do valor base
+# Exemplo:
+# Valor base = 1000
+# Nível 1 = 1000
+# Nível 2 = 1200
+# Nível 3 = 1400
+PercentagePerLevel: 0.2
+
+enchantment:
+  DIG_SPEED:
+    description: "&fMinerar bem rapidinho"
+    maxLevel: 500
+    price: 1500
+    icon:
+      material: PAPER
+      data: 0
+  LOOT_BONUS_BLOCKS:
+    description: "&fMultiplicar as gemas e os drops ganhos"
+    maxLevel: 500
+    price: 1500
+    icon:
+      head: "http://textures.minecraft.net/texture/3f4876b6a5d6dd785e091fd134a21c91d0a9cac5a622e448b5ffcb65ef45278"
+
+mines:
+  mine1:
+    permission: "minas.mina1"
+    # quando o jogador clicar, o console irá executar os comandos abaixo
+    executeCommands:
+      - 'gemas add %player% 1' #apenas exemplo
+      - 'gemas add %player% 2' #apenas exemplo
+    icon:
+      material: DIAMOND_SWORD
+      data: 0
+      glow: true
+      displayName: "&aMina 1"
+      description:
+        - '&7Clique aqui para conseguir uma &bMina 1'
+  mine2:
+    permission: "minas.mina2"
+    # quando o jogador clicar, o console irá executar os comandos abaixo
+    executeCommands:
+      - 'gemas add %player% 1' #apenas exemplo
+      - 'gemas add %player% 2' #apenas exemplo
+    icon:
+      head: "http://textures.minecraft.net/texture/cbc7a7b6da631d1bf89caf2ff90089046c1b7dfc68cb6cfa934d94e4cd26bcdd"
+      glow: false
+      displayName: "&aMina 2"
+      description:
+        - '&7Clique aqui para conseguir uma &bMina 2'

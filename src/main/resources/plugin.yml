@@ -1,0 +1,5 @@
+name: WiclowPickaxes
+version: ${project.version}
+main: com.yuhtin.minecraft.wiclowpickaxes.WiclowPickaxes
+softdepend: [ PlaceholderAPI ]
+authors: [ Yuhtin ]

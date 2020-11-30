@@ -27,6 +27,7 @@ public class MineParser {
 
             items.add(
                     MineItem.builder()
+                            .name(key)
                             .itemStack(itemParser.parseItemSection(keySection.getConfigurationSection("icon")))
                             .permission(keySection.getString("permission"))
                             .commands(keySection.getStringList("executeCommands"))

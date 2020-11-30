@@ -15,6 +15,7 @@ import java.util.List;
 @Builder
 public class MineItem {
 
+    private String name;
     private ItemStack itemStack;
     private String permission;
     private List<String> commands;

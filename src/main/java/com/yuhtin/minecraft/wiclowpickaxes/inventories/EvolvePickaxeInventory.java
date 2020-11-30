@@ -12,6 +12,7 @@ import com.yuhtin.minecraft.wiclowpickaxes.utils.ColorUtils;
 import com.yuhtin.minecraft.wiclowpickaxes.utils.ItemBuilder;
 import com.yuhtin.minecraft.wiclowpickaxes.utils.MathUtils;
 import com.yuhtin.minecraft.wiclowpickaxes.utils.PickaxeLoreUpdater;
+import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -71,61 +72,67 @@ public class EvolvePickaxeInventory extends SimpleInventory {
         int i = 12;
         for (Enchantment enchantment : pickaxe.getEnchantments().keySet()) {
             CustomEnchantment customEnchantment = enchantmentController.get(enchantment);
-            if (customEnchantment == null) continue;
+            if (customEnchantment == null || customEnchantment.getMaxLevel() == 0) continue;
 
-            if (customEnchantment.getMaxLevel() == 0) continue;
+            Player player = viewer.getPlayer();
+            PlayerData playerData = this.playerDataController.get(player);
 
             int level = pickaxe.getEnchantments().get(enchantment);
             double evolve = customEnchantment.getMaxLevel() < level + 1
                     ? 0
                     : customEnchantment.getPrice() * (1 + (level * percentagePerLevel));
 
-            editor.setItem(i, InventoryItem.of(
-                    new ItemBuilder(customEnchantment.getItemStack())
-                            .name(ColorUtils.colored("&3" + translate(enchantment.getName())))
-                            .lore(" &f" + customEnchantment.getDescription(),
-                                    "",
-                                    " &b Nível atual: &f" + level,
-                                    " &b Próximo nível: &f" + (evolve == 0 ? "&cMáximo" : level + 1),
-                                    " &b Nível máximo: &f" + customEnchantment.getMaxLevel(),
-                                    "",
-                                    " &bCustará &f" + MathUtils.format(evolve) + " &bgemas.",
-                                    " &bClique para evoluir.")
-                            .result()
-                    ).defaultCallback(action -> {
+            if (evolve == 0) {
 
-                        Player player = action.getPlayer();
-                        if (evolve == 0) {
+                editor.setItem(i, InventoryItem.of(
+                        new ItemBuilder("http://textures.minecraft.net/texture/e9e4bdcf172d5dc77c2bd4e37ad985399a9f2cdebf72463929ea4b666ef6f80")
+                                .name("&a" + translate(enchantment.getName()))
+                                .lore("&fVocê chegou no level máximo deste encantamento &a(" + customEnchantment.getMaxLevel() + ")")
+                                .result()
+                ));
+
+            } else if (evolve > playerData.getGemas()) {
+
+                editor.setItem(i, InventoryItem.of(
+                        new ItemBuilder(Material.BARRIER)
+                                .name("&c" + translate(enchantment.getName()))
+                                .lore("&fVocê precisa de &c" + MathUtils.format(evolve) + " gemas &fpara isto")
+                                .result()
+                ));
+
+            } else {
+
+                editor.setItem(i, InventoryItem.of(
+                        new ItemBuilder(customEnchantment.getItemStack())
+                                .name(ColorUtils.colored("&3" + translate(enchantment.getName())))
+                                .lore(" &f" + customEnchantment.getDescription(),
+                                        "",
+                                        " &b Nível atual: &f" + level,
+                                        " &b Próximo nível: &f" + (evolve == 0 ? "&cMáximo" : level + 1),
+                                        " &b Nível máximo: &f" + customEnchantment.getMaxLevel(),
+                                        "",
+                                        " &bCustará &f" + MathUtils.format(evolve) + " &bgemas.",
+                                        " &bClique para evoluir.")
+                                .result()
+                        ).defaultCallback(action -> {
+
+                            pickaxe.addUnsafeEnchantment(enchantment, level + 1);
+                            PickaxeLoreUpdater.updateItemStack(pickaxe);
 
                             player.sendMessage(ColorUtils.colored(
-                                    "&cEste encantamento está no nível máximo"
+                                    "&aVocê evoluiu este encantamento com sucesso"
                             ));
-                            return;
 
-                        }
+                            playerData.setGemas(playerData.getGemas() - evolve);
 
-                        PlayerData playerData = this.playerDataController.get(player);
-                        if (playerData.getGemas() < evolve) {
+                            if (viewer.getPropertyMap().get("inHand") != null) player.setItemInHand(pickaxe);
 
-                            player.sendMessage(ColorUtils.colored(
-                                    "&cVocê não tem gemas suficiente para esta ação"
-                            ));
-                            return;
+                            action.updateInventory();
 
-                        }
 
-                        pickaxe.addUnsafeEnchantment(enchantment, level + 1);
-                        PickaxeLoreUpdater.updateItemStack(pickaxe);
-
-                        player.sendMessage(ColorUtils.colored(
-                                "&aVocê evoluiu este encantamento com sucesso"
-                        ));
-
-                        playerData.setGemas(playerData.getGemas() - evolve);
-                        action.updateInventory();
-
-                    })
-            );
+                        })
+                );
+            }
 
             i = 14;
         }

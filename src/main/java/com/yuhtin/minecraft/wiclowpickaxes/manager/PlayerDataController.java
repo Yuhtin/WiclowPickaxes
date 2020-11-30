@@ -7,6 +7,7 @@ import com.yuhtin.minecraft.wiclowpickaxes.sql.PlayerDataDAO;
 import lombok.Data;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,7 +31,7 @@ public class PlayerDataController {
         playerData = playerDataDAO.findByName(player.getName());
         if (playerData == null) {
 
-            playerData = PlayerData.builder().gemas(0).build();
+            playerData = PlayerData.builder().usedMines(new ArrayList<>()).gemas(0).build();
             this.playerDataDAO.insertPlayer(player.getName(), playerData);
 
         }

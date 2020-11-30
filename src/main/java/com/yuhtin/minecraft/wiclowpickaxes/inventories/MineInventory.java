@@ -8,7 +8,6 @@ import com.henryfabio.minecraft.inventoryapi.viewer.Viewer;
 import com.henryfabio.minecraft.inventoryapi.viewer.configuration.impl.ViewerConfigurationImpl;
 import com.henryfabio.minecraft.inventoryapi.viewer.impl.paged.PagedViewer;
 import com.yuhtin.minecraft.wiclowpickaxes.api.mines.MineItem;
-import com.yuhtin.minecraft.wiclowpickaxes.manager.EnchantmentController;
 import com.yuhtin.minecraft.wiclowpickaxes.manager.MineController;
 import com.yuhtin.minecraft.wiclowpickaxes.manager.PlayerDataController;
 import com.yuhtin.minecraft.wiclowpickaxes.utils.ItemBuilder;
@@ -18,6 +17,7 @@ import org.bukkit.Material;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Yuhtin
@@ -47,7 +47,7 @@ public class MineInventory extends PagedInventory {
         editor.setItem(0, InventoryItem.of(
                 new ItemBuilder(viewer.getPlayer().getName())
                         .name("&eSeu perfil")
-                        .lore("&fGemas: &6" + MathUtils.format(playerDataController.get(viewer.getPlayer()).getGemas()))
+                        .lore("&fGemas: &d" + MathUtils.format(playerDataController.get(viewer.getPlayer()).getGemas()))
                         .result()
                 )
         );
@@ -81,14 +81,18 @@ public class MineInventory extends PagedInventory {
     protected List<InventoryItemSupplier> createPageItems(PagedViewer viewer) {
         List<InventoryItemSupplier> items = new ArrayList<>();
 
-        for (MineItem mine : mineController.getMines()) {
+        List<MineItem> mines = new ArrayList<>(mineController.getMines())
+                .stream()
+                .filter(mineItem -> !playerDataController.get(viewer.getPlayer()).getUsedMines().contains(mineItem.getName()))
+                .collect(Collectors.toList());
+
+        for (MineItem mine : mines) {
 
             if (!viewer.getPlayer().hasPermission(mine.getPermission())) continue;
 
             items.add(() -> InventoryItem.of(mine.getItemStack())
                     .defaultCallback(callBack -> {
-
-                        viewer.getPlayer().closeInventory();
+                        
                         for (String command : mine.getCommands()) {
 
                             Bukkit.dispatchCommand(
@@ -97,6 +101,10 @@ public class MineInventory extends PagedInventory {
                             );
 
                         }
+
+                        this.playerDataController.get(viewer.getPlayer()).getUsedMines().add(mine.getName());
+
+                        callBack.updateInventory();
 
                     }));
         }

@@ -24,17 +24,14 @@ import org.bukkit.entity.Player;
 public class GemasCommand {
 
     private final PlayerDataController playerDataController;
-    private final EnchantmentController enchantmentController;
     private final MineController mineController;
-
-    private final double percentagePerLevel;
 
     @Command(name = "gemas", target = CommandTarget.PLAYER)
     public void gemasCommand(Context<Player> context) {
 
         Player player = context.getSender();
         player.sendMessage(ColorUtils.colored(
-                "&fVocê possui &6" + MathUtils.format(this.playerDataController.get(player).getGemas())
+                "&fVocê possui &d" + MathUtils.format(this.playerDataController.get(player).getGemas()) + " gemas"
         ));
 
     }

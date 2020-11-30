@@ -11,7 +11,9 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
 /**
@@ -25,6 +27,38 @@ public class SelectPickaxeListener implements Listener {
     private final PlayerDataController playerDataController;
     private final EnchantmentController enchantmentController;
     private final double percentagePerLevel;
+
+    @EventHandler
+    public void onInteractPickaxe(PlayerInteractEvent event) {
+
+        Player player = event.getPlayer();
+        ItemStack itemInHand = player.getItemInHand();
+
+        if (itemInHand == null
+                || event.getAction() != Action.RIGHT_CLICK_AIR
+                && event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
+
+        Number superPickaxe = NBTUtils.getNumberFromNbt(itemInHand, "superPickaxe");
+        if (superPickaxe.intValue() == 0) return;
+
+        EvolvePickaxeInventory evolvePickaxeInventory = new EvolvePickaxeInventory(
+                playerDataController,
+                enchantmentController,
+                percentagePerLevel
+        ).init();
+
+        evolvePickaxeInventory.openInventory(
+                player,
+                editor -> {
+
+                    editor.getPropertyMap().set("inHand", "1");
+                    editor.getPropertyMap().set("pickaxe", player.getItemInHand());
+
+                }
+
+        );
+
+    }
 
     @EventHandler
     public void onSelectPickaxe(CustomInventoryClickEvent event) {

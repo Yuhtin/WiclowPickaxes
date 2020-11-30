@@ -48,6 +48,7 @@ public class SelectingPickaxeInventory extends SimpleInventory {
 
             ItemStack pickaxe = new ItemBuilder(Material.DIAMOND_PICKAXE)
                     .name("&eSuper Picareta")
+                    .setUnbreakable(true)
                     .applyMeta()
                     .changeItem(item -> {
 
@@ -60,7 +61,6 @@ public class SelectingPickaxeInventory extends SimpleInventory {
                     .wrap();
 
             PickaxeLoreUpdater.updateItemStack(pickaxe);
-
             player.getInventory().addItem(pickaxe);
 
         }));

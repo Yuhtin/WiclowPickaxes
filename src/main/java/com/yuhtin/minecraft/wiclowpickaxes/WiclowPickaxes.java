@@ -77,9 +77,7 @@ public final class WiclowPickaxes extends JavaPlugin {
 
         GemasCommand gemasCommand = new GemasCommand(
                 playerDataController,
-                enchantmentController,
-                mineController,
-                this.getConfig().getDouble("PercentagePerLevel")
+                mineController
         );
 
         bukkitFrame.registerCommands(gemasCommand);

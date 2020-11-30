@@ -13,7 +13,8 @@ public class PlayerDataDAO extends DatabaseProvider {
     public void createTable() {
         update("create table if not exists `wiclow_gemas` ("
                 + "`name` char(16) not null, "
-                + "`gemas` double not null"
+                + "`gemas` double not null,"
+                + "`mines` text not null"
                 + ");");
     }
 
@@ -24,15 +25,17 @@ public class PlayerDataDAO extends DatabaseProvider {
     }
 
     public void insertPlayer(String name, PlayerData playerData) {
-        update("insert into `wiclow_gemas` values (?, ?);",
+        update("insert into `wiclow_gemas` values (?, ?, ?);",
                 name,
-                playerData.getGemas()
+                playerData.getGemas(),
+                ""
         );
     }
 
     public void updatePlayer(String name, PlayerData playerData) {
-        update("update `wiclow_gemas` set `gemas` = ? where `name` = ?",
+        update("update `wiclow_gemas` set `gemas` = ?, set `mines` = ? where `name` = ?",
                 playerData.getGemas(),
+                String.join(", ", playerData.getUsedMines()),
                 name
         );
 

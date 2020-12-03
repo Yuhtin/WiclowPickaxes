@@ -33,7 +33,7 @@ public class PlayerDataDAO extends DatabaseProvider {
     }
 
     public void updatePlayer(String name, PlayerData playerData) {
-        update("update `wiclow_gemas` set `gemas` = ?, set `mines` = ? where `name` = ?",
+        update("update `wiclow_gemas` set `gemas` = ?, `mines` = ? where `name` = ?",
                 playerData.getGemas(),
                 String.join(", ", playerData.getUsedMines()),
                 name

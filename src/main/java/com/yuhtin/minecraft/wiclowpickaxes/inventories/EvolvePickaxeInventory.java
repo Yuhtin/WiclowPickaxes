@@ -116,6 +116,9 @@ public class EvolvePickaxeInventory extends SimpleInventory {
                                 .result()
                         ).defaultCallback(action -> {
 
+                            if (viewer.getPropertyMap().get("inHand") != null && !pickaxe.isSimilar(player.getItemInHand()))
+                                return;
+
                             pickaxe.addUnsafeEnchantment(enchantment, level + 1);
                             PickaxeLoreUpdater.updateItemStack(pickaxe);
 
@@ -128,7 +131,6 @@ public class EvolvePickaxeInventory extends SimpleInventory {
                             if (viewer.getPropertyMap().get("inHand") != null) player.setItemInHand(pickaxe);
 
                             action.updateInventory();
-
 
                         })
                 );

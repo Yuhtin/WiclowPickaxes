@@ -10,6 +10,7 @@ import com.yuhtin.minecraft.wiclowpickaxes.utils.ColorUtils;
 import com.yuhtin.minecraft.wiclowpickaxes.utils.MathUtils;
 import lombok.AllArgsConstructor;
 import me.saiintbrisson.minecraft.command.annotation.Command;
+import me.saiintbrisson.minecraft.command.annotation.Optional;
 import me.saiintbrisson.minecraft.command.command.Context;
 import me.saiintbrisson.minecraft.command.target.CommandTarget;
 import org.bukkit.command.CommandSender;
@@ -27,9 +28,22 @@ public class GemasCommand {
     private final MineController mineController;
 
     @Command(name = "gemas", target = CommandTarget.PLAYER)
-    public void gemasCommand(Context<Player> context) {
+    public void gemasCommand(Context<Player> context,
+                             @Optional Player target) {
 
         Player player = context.getSender();
+
+        if (target != null) {
+
+            double gemas = playerDataController.get(target).getGemas();
+            player.sendMessage(ColorUtils.colored(
+                    "&fO jogador &d" + target.getName() + " &fpossui &d" + MathUtils.format(gemas) + " gemas&f."
+            ));
+
+            return;
+
+        }
+
         player.sendMessage(ColorUtils.colored(
                 "&fVocê possui &d" + MathUtils.format(this.playerDataController.get(player).getGemas()) + " gemas"
         ));
@@ -58,6 +72,38 @@ public class GemasCommand {
 
         context.getSender().sendMessage(ColorUtils.colored(
                 "&aVocê adicionou &2" + MathUtils.format(quantity) + " gemas &apara o jogador " + target.getName()
+        ));
+
+    }
+
+    @Command(name = "gemas.enviar", target = CommandTarget.PLAYER)
+    public void sendGemasCommand(Context<Player> context,
+                                 Player target,
+                                 double quantity) {
+
+        Player sender = context.getSender();
+        PlayerData senderData = playerDataController.get(sender);
+
+        if (senderData.getGemas() < quantity) {
+
+            sender.sendMessage(ColorUtils.colored(
+                    "&cVocê não tem esta quantidade de gemas"
+            ));
+            return;
+
+        }
+
+        PlayerData targetData = playerDataController.get(target);
+
+        senderData.setGemas(senderData.getGemas() - quantity);
+        targetData.setGemas(targetData.getGemas() + quantity);
+
+        sender.sendMessage(ColorUtils.colored(
+                "&fVocê enviou &d" + MathUtils.format(quantity) + " gemas &fpara o jogador &d" + target.getName()
+        ));
+
+        target.sendMessage(ColorUtils.colored(
+                "&fVocê recebeu &d" + MathUtils.format(quantity) + " gemas &fdo jogador &d" + sender.getName()
         ));
 
     }

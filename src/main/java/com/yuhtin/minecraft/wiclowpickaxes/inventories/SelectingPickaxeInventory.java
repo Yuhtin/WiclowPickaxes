@@ -13,11 +13,16 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
+
 /**
  * @author Yuhtin
  * Github: https://github.com/Yuhtin
  */
 public class SelectingPickaxeInventory extends SimpleInventory {
+
+    private static final HashMap<String, Long> playerDelay = new HashMap<>();
 
     public SelectingPickaxeInventory() {
         super(
@@ -46,6 +51,15 @@ public class SelectingPickaxeInventory extends SimpleInventory {
 
             }
 
+            if (playerDelay.containsKey(player.getName()) && playerDelay.get(player.getName()) > System.currentTimeMillis()) {
+
+                player.sendMessage(ColorUtils.colored(
+                        "&cVocê precisa aguardar um tempo antes de pegar outra picareta"
+                ));
+                return;
+
+            }
+
             ItemStack pickaxe = new ItemBuilder(Material.DIAMOND_PICKAXE)
                     .name("&eSuper Picareta")
                     .setUnbreakable(true)
@@ -62,6 +76,7 @@ public class SelectingPickaxeInventory extends SimpleInventory {
 
             PickaxeLoreUpdater.updateItemStack(pickaxe);
             player.getInventory().addItem(pickaxe);
+            playerDelay.put(player.getName(), System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(3));
 
         }));
 
